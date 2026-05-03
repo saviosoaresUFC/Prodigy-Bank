@@ -24,23 +24,36 @@ module.exports = async function (fastify, opts) {
             try {
                 const passwordHash = await bcrypt.hash(senha, 10)
 
-                const novoUsuario = await fastify.prisma.usuario.create({
-                    data: {
-                        nome,
-                        email,
-                        senha: passwordHash
-                    },
-                    select: {
-                        id: true,
-                        nome: true,
-                        email: true,
-                        createdAt: true
-                    }
+                const novoUsuario = await fastify.prisma.$transaction(async (tx) => {
+                    const user = await tx.usuario.create({
+                        data: {
+                            nome,
+                            email,
+                            senha: passwordHash
+                        }
+                    })
+
+                    // Cria a conta com número aleatório de 6 dígitos e saldo inicial de R$ 1000
+                    const numeroConta = Math.floor(100000 + Math.random() * 900000).toString()
+                    
+                    await tx.conta.create({
+                        data: {
+                            numero: numeroConta,
+                            saldo: 1000.00,
+                            usuarioId: user.id
+                        }
+                    })
+
+                    return user
                 })
 
                 span.setAttribute('usuario.id', novoUsuario.id)
 
-                return reply.code(201).send(novoUsuario)
+                return reply.code(201).send({
+                    id: novoUsuario.id,
+                    nome: novoUsuario.nome,
+                    email: novoUsuario.email
+                })
 
             } catch (err) {
                 span.recordException(err)

@@ -1,5 +1,5 @@
 {
-  "name": "projeto-fastify-learning",
+  "name": "prodigy-bank",
   "version": "1.0.0",
   "description": "This project was bootstrapped with Fastify-CLI.",
   "main": "server.js",
@@ -12,8 +12,7 @@
     "dev": "fastify start -w -l info -P --options server.js -- --import ./instrumentation.mjs",
     "prisma:migrate": "prisma migrate dev",
     "prisma:generate": "prisma generate",
-    "prisma:studio": "prisma studio",
-    "postinstall": "prisma generate"
+    "prisma:studio": "prisma studio"
   },
   "keywords": [],
   "author": "Savio de Carvalho Soares",

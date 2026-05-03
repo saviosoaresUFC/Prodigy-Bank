@@ -1,0 +1,49 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senha     String
+  createdAt DateTime @default(now())
+  conta     Conta?
+
+  @@map("usuarios")
+}
+
+model Conta {
+  id        Int     @id @default(autoincrement())
+  numero    String  @unique
+  saldo     Decimal @default(0) @db.Decimal(10, 2)
+  usuarioId Int     @unique
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  transacoesEnviadas  Transacao[] @relation("origem")
+  transacoesRecebidas Transacao[] @relation("destino")
+
+  @@map("contas")
+}
+
+model Transacao {
+  id        Int      @id @default(autoincrement())
+  valor     Decimal  @db.Decimal(10, 2)
+  tipo      String // PIX, TRANSFERENCIA, DEPOSITO
+  descricao String?
+  createdAt DateTime @default(now())
+
+  origemContaId Int?
+  origem        Conta? @relation("origem", fields: [origemContaId], references: [id])
+
+  destinoContaId Int?
+  destino        Conta? @relation("destino", fields: [destinoContaId], references: [id])
+
+  @@map("transacoes")
+}

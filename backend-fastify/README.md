@@ -1,4 +1,4 @@
-# Projeto Fastify Learning
+# Prodigy Bank
 
 Este é um projeto de aprendizado prático demonstrando como construir uma API moderna, escalável e bem-estruturada utilizando as tecnologias mais requisitadas no mercado de backend em Node.js.
 
